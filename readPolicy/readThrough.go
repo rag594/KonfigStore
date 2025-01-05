@@ -3,7 +3,6 @@ package readPolicy
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/rag594/konfigStore/cache"
 	"github.com/rag594/konfigStore/db"
 	"github.com/rag594/konfigStore/model"
@@ -24,7 +23,6 @@ func NewReadThroughPolicy[T model.TenantId, V any](configDbOps db.IConfigDbRepo[
 
 func (r *ReadThroughPolicy[T, V]) GetConfig(ctx context.Context, key string, entityId T) (*V, error) {
 	v, err := r.ConfigCacheOps.GetConfigByKeyForEntity(ctx, key)
-	fmt.Println("err ", err)
 	if err != nil && !errors.Is(err, redis.Nil) {
 		return nil, err
 	}

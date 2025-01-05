@@ -2,24 +2,15 @@ package main
 
 import (
 	"github.com/jmoiron/sqlx"
+	"github.com/rag594/konfigStore/readPolicy"
 	"github.com/redis/go-redis/v9"
 	"time"
-)
-
-type ReadPolicy string
-
-func (r ReadPolicy) Value() string {
-	return string(r)
-}
-
-const (
-	ReadThrough ReadPolicy = "read-through"
 )
 
 type ConfigOpts struct {
 	SqlxDbConn    *sqlx.DB
 	RedisNCClient *redis.Client
-	ReadPolicy    ReadPolicy
+	ReadPolicy    readPolicy.ReadPolicy
 	TTL           time.Duration
 }
 
@@ -43,7 +34,7 @@ func WithTTL(ttl time.Duration) ConfigOptsOptions {
 	}
 }
 
-func WithReadPolicy(readPolicy ReadPolicy) ConfigOptsOptions {
+func WithReadPolicy(readPolicy readPolicy.ReadPolicy) ConfigOptsOptions {
 	return func(c *ConfigOpts) {
 		c.ReadPolicy = readPolicy
 	}

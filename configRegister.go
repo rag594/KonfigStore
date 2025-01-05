@@ -41,7 +41,7 @@ func RegisterConfig[T model.TenantId, V any](value *V, configOptsOptions ...Conf
 	}
 
 	// Register read policy
-	if len(configOptions.ReadPolicy) != 0 && strings.Compare(configOptions.ReadPolicy.Value(), ReadThrough.Value()) == 0 {
+	if len(configOptions.ReadPolicy) != 0 && strings.Compare(configOptions.ReadPolicy.Value(), readPolicy.ReadThrough.Value()) == 0 {
 		configRegister.ReadPolicy = readPolicy.NewReadThroughPolicy(configDbOps, configRegister.ConfigCacheOps)
 	}
 

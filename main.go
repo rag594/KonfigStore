@@ -4,31 +4,62 @@ import (
 	"context"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/rag594/konfigStore/cache"
-	configDb "github.com/rag594/konfigStore/db"
+	"github.com/jmoiron/sqlx"
+	"github.com/rag594/konfigStore/readPolicy"
+	"github.com/redis/go-redis/v9"
+	"log"
 	"time"
 )
 
-type UpiOptimalRouting struct {
+type ComplexFeatureConfig struct {
 	Enable string
+}
+
+func NewRedisNonClusteredClient() *redis.Client {
+	// Initialize Redis client
+	rdb := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379", // Adjust for your Redis setup
+	})
+
+	return rdb
+}
+
+func GetDbConnection() *sqlx.DB {
+	// Replace with your database credentials
+	dsn := "rabby:rabby123@tcp(localhost:3306)/configDb"
+
+	// Open the database connection
+	db, err := sqlx.Open("mysql", dsn)
+	if err != nil {
+		log.Fatalf("Error opening database: %v\n", err)
+	}
+
+	// Test the database connection
+	if err := db.Ping(); err != nil {
+		log.Fatalf("Error pinging database: %v\n", err)
+	}
+
+	fmt.Println("Successfully connected to MySQL!")
+
+	return db
 }
 
 func main() {
 
-	upiConfig := &UpiOptimalRouting{Enable: "fewgvfwrEGRW"}
+	upiConfig := &ComplexFeatureConfig{Enable: "fewgvfwrEGRW"}
 
-	dbConn := configDb.GetDbConnection()
+	dbConn := GetDbConnection()
 
 	defer dbConn.Close()
 
-	redisConn := cache.NewRedisNonClusteredClient()
+	redisConn := NewRedisNonClusteredClient()
 
-	upiOptimalRoutingConfigRegister := RegisterConfig[int, UpiOptimalRouting](
+	upiOptimalRoutingConfigRegister := RegisterConfig[int, ComplexFeatureConfig](
 		upiConfig,
 		WithSqlXDbConn(dbConn),
 		WithRedisNCClient(redisConn),
 		WithTTL(time.Minute),
-		WithReadPolicy(ReadThrough),
+		WithReadPolicy(readPolicy.ReadThrough),
 	)
 
 	upiOptimalRoutingConfigRegister.Config.EntityId = 11
