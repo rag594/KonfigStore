@@ -46,7 +46,7 @@ func GetDbConnection() *sqlx.DB {
 
 func main() {
 
-	upiConfig := &ComplexFeatureConfig{Enable: "fewgvfwrEGRW"}
+	complexFeatConfig := &ComplexFeatureConfig{Enable: "fewgvfwrEGRW"}
 
 	dbConn := GetDbConnection()
 
@@ -54,17 +54,17 @@ func main() {
 
 	redisConn := NewRedisNonClusteredClient()
 
-	upiOptimalRoutingConfigRegister := RegisterConfig[int, ComplexFeatureConfig](
-		upiConfig,
+	complexFeatConfigRegister := RegisterConfig[int, ComplexFeatureConfig](
+		complexFeatConfig,
 		WithSqlXDbConn(dbConn),
 		WithRedisNCClient(redisConn),
 		WithTTL(time.Minute),
 		WithReadPolicy(readPolicy.CacheAside),
 	)
 
-	upiOptimalRoutingConfigRegister.Config.EntityId = 11
+	complexFeatConfigRegister.Config.EntityId = 11
 
-	x, err := upiOptimalRoutingConfigRegister.ReadPolicy.GetConfig(context.Background(), upiOptimalRoutingConfigRegister.Config.GetKey(), upiOptimalRoutingConfigRegister.Config.EntityId)
+	x, err := complexFeatConfigRegister.ReadPolicy.GetConfig(context.Background(), complexFeatConfigRegister.Config.GetKey(), complexFeatConfigRegister.Config.EntityId)
 
 	if err != nil {
 		fmt.Println(err)
