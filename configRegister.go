@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"github.com/iancoleman/strcase"
 	"github.com/rag594/konfigStore/cache"
 	configDb "github.com/rag594/konfigStore/db"
 	"github.com/rag594/konfigStore/model"
@@ -9,18 +11,17 @@ import (
 )
 
 type ConfigRegister[T model.TenantId, V any] struct {
-	Config         *model.Config[T, V]
+	ConfigKey      string
 	ConfigDbOps    configDb.IConfigDbRepo[T, V]
 	ConfigCacheOps cache.IConfigCacheRepo[T, V]
 	ReadPolicy     readPolicy.IReadPolicy[T, V]
 }
 
-func RegisterConfig[T model.TenantId, V any](value *V, configOptsOptions ...ConfigOptsOptions) *ConfigRegister[T, V] {
+func RegisterConfig[T model.TenantId, V any](configOptsOptions ...ConfigOptsOptions) *ConfigRegister[T, V] {
 	// Registers a new config
-	config := model.NewConfig[T, V](value)
-
 	configRegister := &ConfigRegister[T, V]{
-		Config: config,
+		// Set the default configuration key
+		ConfigKey: strcase.ToScreamingSnake(strings.Split(fmt.Sprintf("%T", *new(V)), ".")[1]),
 	}
 
 	configOptions := &ConfigOpts{}

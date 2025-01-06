@@ -46,25 +46,23 @@ func GetDbConnection() *sqlx.DB {
 
 func main() {
 
-	complexFeatConfig := &ComplexFeatureConfig{Enable: "fewgvfwrEGRW"}
-
+	// db/redis client used for testing
 	dbConn := GetDbConnection()
-
 	defer dbConn.Close()
-
 	redisConn := NewRedisNonClusteredClient()
 
+	/**
+	Example on how to fetch the config
+	*/
+
 	complexFeatConfigRegister := RegisterConfig[int, ComplexFeatureConfig](
-		complexFeatConfig,
 		WithSqlXDbConn(dbConn),
 		WithRedisNCClient(redisConn),
 		WithTTL(time.Minute),
 		WithReadPolicy(readPolicy.CacheAside),
 	)
 
-	complexFeatConfigRegister.Config.EntityId = 11
-
-	x, err := complexFeatConfigRegister.ReadPolicy.GetConfig(context.Background(), complexFeatConfigRegister.Config.GetKey(), complexFeatConfigRegister.Config.EntityId)
+	x, err := complexFeatConfigRegister.ReadPolicy.GetConfig(context.Background(), complexFeatConfigRegister.ConfigKey, 11)
 
 	if err != nil {
 		fmt.Println(err)
