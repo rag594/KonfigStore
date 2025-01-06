@@ -36,13 +36,18 @@ func RegisterConfig[T model.TenantId, V any](value *V, configOptsOptions ...Conf
 	// Cache is optional for registration
 	if configOptions.RedisNCClient != nil {
 		// Registers Cache ops for new config
-		configCacheOps := cache.RegisterConfigForCacheOps[T, V](configOptions.RedisNCClient, configOptions.TTL)
+		configCacheOps := cache.RegisterConfigForCacheOps[T, V](configOptions.RedisNCClient, configDbOps, configOptions.TTL)
 		configRegister.ConfigCacheOps = configCacheOps
 	}
 
-	// Register read policy
+	// Register read policy - read-through
 	if len(configOptions.ReadPolicy) != 0 && strings.Compare(configOptions.ReadPolicy.Value(), readPolicy.ReadThrough.Value()) == 0 {
-		configRegister.ReadPolicy = readPolicy.NewReadThroughPolicy(configDbOps, configRegister.ConfigCacheOps)
+		configRegister.ReadPolicy = readPolicy.NewReadThroughPolicy(configRegister.ConfigCacheOps)
+	}
+
+	// Register read policy - cache-aside
+	if len(configOptions.ReadPolicy) != 0 && strings.Compare(configOptions.ReadPolicy.Value(), readPolicy.CacheAside.Value()) == 0 {
+		configRegister.ReadPolicy = readPolicy.NewCacheAsidePolicy(configRegister.ConfigCacheOps, configDbOps)
 	}
 
 	return configRegister
