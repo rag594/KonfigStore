@@ -11,6 +11,7 @@ type ConfigOpts struct {
 	SqlxDbConn    *sqlx.DB
 	RedisNCClient *redis.Client
 	ReadPolicy    readPolicy.ReadPolicy
+	ConfigKey     string
 	TTL           time.Duration
 }
 
@@ -37,5 +38,11 @@ func WithTTL(ttl time.Duration) ConfigOptsOptions {
 func WithReadPolicy(readPolicy readPolicy.ReadPolicy) ConfigOptsOptions {
 	return func(c *ConfigOpts) {
 		c.ReadPolicy = readPolicy
+	}
+}
+
+func WithConfigKey(configKey string) ConfigOptsOptions {
+	return func(c *ConfigOpts) {
+		c.ConfigKey = configKey
 	}
 }

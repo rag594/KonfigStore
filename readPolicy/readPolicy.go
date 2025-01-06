@@ -6,5 +6,5 @@ import (
 )
 
 type IReadPolicy[T model.TenantId, V any] interface {
-	GetConfig(ctx context.Context, key string, entityId T) (*V, error)
+	GetConfig(ctx context.Context, cacheKey string, entityId T) (*V, error)
 }

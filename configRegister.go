@@ -11,7 +11,6 @@ import (
 )
 
 type ConfigRegister[T model.TenantId, V any] struct {
-	ConfigKey      string
 	ConfigDbOps    configDb.IConfigDbRepo[T, V]
 	ConfigCacheOps cache.IConfigCacheRepo[T, V]
 	ReadPolicy     readPolicy.IReadPolicy[T, V]
@@ -19,19 +18,19 @@ type ConfigRegister[T model.TenantId, V any] struct {
 
 func RegisterConfig[T model.TenantId, V any](configOptsOptions ...ConfigOptsOptions) *ConfigRegister[T, V] {
 	// Registers a new config
-	configRegister := &ConfigRegister[T, V]{
-		// Set the default configuration key
+	configRegister := &ConfigRegister[T, V]{}
+
+	configOptions := &ConfigOpts{
+		// sets the default configKey which is the struct name defined with snake case(A_B_C)
 		ConfigKey: strcase.ToScreamingSnake(strings.Split(fmt.Sprintf("%T", *new(V)), ".")[1]),
 	}
-
-	configOptions := &ConfigOpts{}
 
 	for _, option := range configOptsOptions {
 		option(configOptions)
 	}
 
 	// Registers Db ops for new config(this is registered by default)
-	configDbOps := configDb.RegisterConfigForDbOps[T, V](configOptions.SqlxDbConn)
+	configDbOps := configDb.RegisterConfigForDbOps[T, V](configOptions.SqlxDbConn, configOptions.ConfigKey)
 	configRegister.ConfigDbOps = configDbOps
 
 	// Cache is optional for registration

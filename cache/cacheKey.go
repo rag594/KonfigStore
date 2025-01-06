@@ -1,0 +1,51 @@
+package cache
+
+import (
+	"fmt"
+	"github.com/iancoleman/strcase"
+	"github.com/rag594/konfigStore/model"
+	"strings"
+)
+
+const (
+	defaultKeyPrefix = "KONFIG_STORE"
+)
+
+type CacheKey[T model.TenantId, V any] struct {
+	EntityId  T
+	Prefix    string
+	ConfigKey string
+}
+
+type CacheKeyOptions[T model.TenantId, V any] func(*CacheKey[T, V])
+
+func WithCacheKeyPrefix[T model.TenantId, V any](prefix string) CacheKeyOptions[T, V] {
+	return func(c *CacheKey[T, V]) {
+		c.Prefix = prefix
+	}
+}
+
+func WithCacheConfigKey[T model.TenantId, V any](configKey string) CacheKeyOptions[T, V] {
+	return func(c *CacheKey[T, V]) {
+		c.ConfigKey = configKey
+	}
+}
+
+func NewCacheKey[T model.TenantId, V any](entityId T, opts ...CacheKeyOptions[T, V]) *CacheKey[T, V] {
+	c := &CacheKey[T, V]{
+		EntityId:  entityId,
+		Prefix:    defaultKeyPrefix,
+		ConfigKey: strcase.ToScreamingSnake(strings.Split(fmt.Sprintf("%T", *new(V)), ".")[1]),
+	}
+
+	for _, opt := range opts {
+		opt(c)
+	}
+
+	return c
+
+}
+
+func (c *CacheKey[T, V]) DefaultValue() string {
+	return fmt.Sprintf("%s_%v_%s", c.Prefix, c.EntityId, c.ConfigKey)
+}

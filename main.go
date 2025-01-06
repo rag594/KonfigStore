@@ -5,6 +5,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	"github.com/rag594/konfigStore/cache"
 	"github.com/rag594/konfigStore/readPolicy"
 	"github.com/redis/go-redis/v9"
 	"log"
@@ -55,6 +56,7 @@ func main() {
 	Example on how to fetch the config
 	*/
 
+	// register your new configuration
 	complexFeatConfigRegister := RegisterConfig[int, ComplexFeatureConfig](
 		WithSqlXDbConn(dbConn),
 		WithRedisNCClient(redisConn),
@@ -62,12 +64,26 @@ func main() {
 		WithReadPolicy(readPolicy.CacheAside),
 	)
 
-	x, err := complexFeatConfigRegister.ReadPolicy.GetConfig(context.Background(), complexFeatConfigRegister.ConfigKey, 11)
+	// define your new cache key(it ius a function of entityId along with other options)
+	cacheKeyForEntityA := cache.NewCacheKey[int, ComplexFeatureConfig](11)
+
+	// get the config for any entity
+	x, err := complexFeatConfigRegister.ReadPolicy.GetConfig(context.Background(), cacheKeyForEntityA.DefaultValue(), 11)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	fmt.Println(x)
+
+	cacheKeyForEntityB := cache.NewCacheKey[int, ComplexFeatureConfig](12)
+
+	y, err := complexFeatConfigRegister.ReadPolicy.GetConfig(context.Background(), cacheKeyForEntityB.DefaultValue(), 12)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(y)
 
 }

@@ -7,12 +7,14 @@ import (
 )
 
 type ConfigRepo[T model.TenantId, V any] struct {
-	Conn *sqlx.DB
+	ConfigKey string
+	Conn      *sqlx.DB
 }
 
-func RegisterConfigForDbOps[T model.TenantId, V any](conn *sqlx.DB) *ConfigRepo[T, V] {
+func RegisterConfigForDbOps[T model.TenantId, V any](conn *sqlx.DB, configKey string) *ConfigRepo[T, V] {
 	return &ConfigRepo[T, V]{
-		Conn: conn,
+		Conn:      conn,
+		ConfigKey: configKey,
 	}
 }
 
@@ -28,9 +30,9 @@ func (c *ConfigRepo[T, V]) SaveConfig(ctx context.Context, config *model.Config[
 
 }
 
-func (c *ConfigRepo[T, V]) GetConfigByKeyForEntity(ctx context.Context, key string, entityId T) (*V, error) {
+func (c *ConfigRepo[T, V]) GetConfigByKeyForEntity(ctx context.Context, entityId T) (*V, error) {
 	d := &model.ConfigValue[V]{}
-	err := c.Conn.GetContext(ctx, d, "select value from Config where configKey = ? and entityId = ?", key, entityId)
+	err := c.Conn.GetContext(ctx, d, "select value from Config where configKey = ? and entityId = ?", c.ConfigKey, entityId)
 	if err != nil {
 		return nil, err
 	}

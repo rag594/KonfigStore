@@ -68,7 +68,7 @@ func (c *ConfigRedisRepo[T, V]) GetConfig(ctx context.Context, key string, entit
 	}
 
 	// fetch the config from primary data source
-	vDb, err := c.ConfigDbRepo.GetConfigByKeyForEntity(ctx, key, entityId)
+	vDb, err := c.ConfigDbRepo.GetConfigByKeyForEntity(ctx, entityId)
 
 	if err != nil {
 		return nil, err

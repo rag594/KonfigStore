@@ -34,7 +34,7 @@ func (r *CacheAsidePolicy[T, V]) GetConfig(ctx context.Context, key string, enti
 	}
 
 	// fetch the config from primary data source
-	vDb, err := r.ConfigDbRepo.GetConfigByKeyForEntity(ctx, key, entityId)
+	vDb, err := r.ConfigDbRepo.GetConfigByKeyForEntity(ctx, entityId)
 
 	if err != nil {
 		return nil, err
