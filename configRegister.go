@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-redsync/redsync/v4"
+	"github.com/go-redsync/redsync/v4/redis/goredis/v9"
 	"github.com/iancoleman/strcase"
 	"github.com/rag594/konfigStore/cache"
 	configDb "github.com/rag594/konfigStore/db"
+	"github.com/rag594/konfigStore/locks"
 	"github.com/rag594/konfigStore/model"
 	"github.com/rag594/konfigStore/readPolicy"
 	"strings"
@@ -14,6 +17,7 @@ type ConfigRegister[T model.TenantId, V any] struct {
 	ConfigDbOps    configDb.IConfigDbRepo[T, V]
 	ConfigCacheOps cache.IConfigCacheRepo[T, V]
 	ReadPolicy     readPolicy.IReadPolicy[T, V]
+	LockManager    locks.LockManager
 }
 
 func RegisterConfig[T model.TenantId, V any](configOptsOptions ...ConfigOptsOptions) *ConfigRegister[T, V] {
@@ -38,6 +42,9 @@ func RegisterConfig[T model.TenantId, V any](configOptsOptions ...ConfigOptsOpti
 		// Registers Cache ops for new config
 		configCacheOps := cache.RegisterConfigForCacheOps[T, V](configOptions.RedisNCClient, configDbOps, configOptions.TTL)
 		configRegister.ConfigCacheOps = configCacheOps
+		// using redSync for redis-locks
+		pool := goredis.NewPool(configOptions.RedisNCClient)
+		configRegister.LockManager = locks.NewRedisLockManager(redsync.New(pool))
 	}
 
 	// Register read policy - read-through
@@ -47,7 +54,7 @@ func RegisterConfig[T model.TenantId, V any](configOptsOptions ...ConfigOptsOpti
 
 	// Register read policy - cache-aside
 	if len(configOptions.ReadPolicy) != 0 && strings.Compare(configOptions.ReadPolicy.Value(), readPolicy.CacheAside.Value()) == 0 {
-		configRegister.ReadPolicy = readPolicy.NewCacheAsidePolicy(configRegister.ConfigCacheOps, configDbOps)
+		configRegister.ReadPolicy = readPolicy.NewCacheAsidePolicy(configRegister.ConfigCacheOps, configDbOps, configRegister.LockManager)
 	}
 
 	return configRegister

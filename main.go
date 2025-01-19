@@ -76,9 +76,9 @@ func main() {
 
 	fmt.Println(x)
 
-	cacheKeyForEntityB := cache.NewCacheKey[int, ComplexFeatureConfig](12)
+	cacheKeyForEntityB := cache.NewCacheKey[int, ComplexFeatureConfig](15)
 
-	y, err := complexFeatConfigRegister.ReadPolicy.GetConfig(context.Background(), cacheKeyForEntityB.DefaultValue(), 12)
+	y, err := complexFeatConfigRegister.ReadPolicy.GetConfig(context.Background(), cacheKeyForEntityB.DefaultValue(), 15)
 
 	if err != nil {
 		fmt.Println(err)
