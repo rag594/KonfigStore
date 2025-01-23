@@ -47,15 +47,8 @@ func RegisterConfig[T model.TenantId, V any](configOptsOptions ...ConfigOptsOpti
 		configRegister.LockManager = locks.NewRedisLockManager(redsync.New(pool))
 	}
 
-	// Register read policy - read-through
-	if len(configOptions.ReadPolicy) != 0 && strings.Compare(configOptions.ReadPolicy.Value(), readPolicy.ReadThrough.Value()) == 0 {
-		configRegister.ReadPolicy = readPolicy.NewReadThroughPolicy(configRegister.ConfigCacheOps)
-	}
-
-	// Register read policy - cache-aside
-	if len(configOptions.ReadPolicy) != 0 && strings.Compare(configOptions.ReadPolicy.Value(), readPolicy.CacheAside.Value()) == 0 {
-		configRegister.ReadPolicy = readPolicy.NewCacheAsidePolicy(configRegister.ConfigCacheOps, configDbOps)
-	}
+	// Default read policy
+	configRegister.ReadPolicy = readPolicy.NewDefaultReadPolicy(configRegister.ConfigCacheOps, configDbOps)
 
 	return configRegister
 }

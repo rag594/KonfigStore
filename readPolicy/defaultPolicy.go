@@ -10,35 +10,23 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type CacheAsidePolicy[T model.TenantId, V any] struct {
+type DefaultReadPolicy[T model.TenantId, V any] struct {
 	ConfigCacheOps cache.IConfigCacheRepo[T, V]
 	ConfigDbRepo   db.IConfigDbRepo[T, V]
 }
 
-func NewCacheAsidePolicy[T model.TenantId, V any](configCacheOps cache.IConfigCacheRepo[T, V], configDbOps db.IConfigDbRepo[T, V]) *CacheAsidePolicy[T, V] {
-	return &CacheAsidePolicy[T, V]{
+func NewDefaultReadPolicy[T model.TenantId, V any](configCacheOps cache.IConfigCacheRepo[T, V], configDbOps db.IConfigDbRepo[T, V]) *DefaultReadPolicy[T, V] {
+	return &DefaultReadPolicy[T, V]{
 		ConfigCacheOps: configCacheOps,
 		ConfigDbRepo:   configDbOps,
 	}
 }
 
-func (r *CacheAsidePolicy[T, V]) GetConfig(ctx context.Context, key string, entityId T) (*V, error) {
+func (r *DefaultReadPolicy[T, V]) GetConfig(ctx context.Context, key string, entityId T) (*V, error) {
 	v, err := r.ConfigCacheOps.GetConfigByKeyForEntity(ctx, key)
 	if err != nil && !errors.Is(err, redis.Nil) {
 		return nil, err
 	}
-
-	// config present in cache
-	if v != nil {
-		return v, nil
-	}
-
-	/**
-		TODO: Need to do a benchmarking, using distributed lock vs
-	 		  request coalescing(can we make it distributed?? right now it is local to each instance)
-	  		  Generally we use request coalescing for high read scenarios and distributed locks how high
-			  writes scenario.
-	*/
 
 	// config present in cache
 	if v != nil {

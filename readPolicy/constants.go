@@ -7,6 +7,5 @@ func (r ReadPolicy) Value() string {
 }
 
 const (
-	ReadThrough ReadPolicy = "read-through"
-	CacheAside  ReadPolicy = "cache-aside"
+	CacheAside ReadPolicy = "cache-aside"
 )
