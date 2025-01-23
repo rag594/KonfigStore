@@ -4,5 +4,5 @@ import "context"
 
 type LockManager interface {
 	Lock(context.Context, string) error
-	Unlock() (bool, error)
+	Unlock(context.Context) (bool, error)
 }

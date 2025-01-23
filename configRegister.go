@@ -54,7 +54,7 @@ func RegisterConfig[T model.TenantId, V any](configOptsOptions ...ConfigOptsOpti
 
 	// Register read policy - cache-aside
 	if len(configOptions.ReadPolicy) != 0 && strings.Compare(configOptions.ReadPolicy.Value(), readPolicy.CacheAside.Value()) == 0 {
-		configRegister.ReadPolicy = readPolicy.NewCacheAsidePolicy(configRegister.ConfigCacheOps, configDbOps, configRegister.LockManager)
+		configRegister.ReadPolicy = readPolicy.NewCacheAsidePolicy(configRegister.ConfigCacheOps, configDbOps)
 	}
 
 	return configRegister

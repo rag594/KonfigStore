@@ -24,6 +24,6 @@ func (r *RedisLockManager) Lock(ctx context.Context, key string) error {
 
 }
 
-func (r *RedisLockManager) Unlock() (bool, error) {
-	return r.Mutex.Unlock()
+func (r *RedisLockManager) Unlock(ctx context.Context) (bool, error) {
+	return r.Mutex.UnlockContext(ctx)
 }
