@@ -97,14 +97,14 @@ func main() {
 	smartFeatConfigRegister := RegisterConfig[int, SmartFeatureConfig](
 		WithSqlXDbConn(dbConn),
 		WithRedisNCClient(redisConn),
-		WithWritePolicy(writePolicy.WriteAround),
+		WithWritePolicy(writePolicy.WriteBack),
 		WithTTL(time.Minute),
 	)
 
 	// define your new cache key(it ius a function of entityId along with other options)
 	cacheKeyForEntityC := cache.NewCacheKey[int, SmartFeatureConfig](20)
 
-	val := &SmartFeatureConfig{SmartSetting: "ljlkjlkjla"}
+	val := &SmartFeatureConfig{SmartSetting: "gsgsgsfhg"}
 
 	err = smartFeatConfigRegister.WritePolicy.SetConfig(context.Background(), cacheKeyForEntityC.DefaultValue(), 20, val)
 
@@ -119,5 +119,7 @@ func main() {
 	}
 
 	fmt.Println(smartVal)
+
+	time.Sleep(time.Minute * 2)
 
 }

@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-redsync/redsync/v4"
-	"github.com/go-redsync/redsync/v4/redis/goredis/v9"
 	"github.com/iancoleman/strcase"
 	"github.com/rag594/konfigStore/cache"
 	configDb "github.com/rag594/konfigStore/db"
@@ -44,9 +42,7 @@ func RegisterConfig[T model.TenantId, V any](configOptsOptions ...ConfigOptsOpti
 		// Registers Cache ops for new config
 		configCacheOps := cache.RegisterConfigForCacheOps[T, V](configOptions.RedisNCClient, configDbOps, configOptions.TTL)
 		configRegister.configCacheOps = configCacheOps
-		// using redSync for redis-locks
-		pool := goredis.NewPool(configOptions.RedisNCClient)
-		configRegister.lockManager = locks.NewRedisLockManager(redsync.New(pool))
+		configRegister.lockManager = locks.NewRedisLockManager(configOptions.RedisNCClient)
 	}
 
 	// Default read policy
