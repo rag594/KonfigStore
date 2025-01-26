@@ -10,14 +10,16 @@ import (
 	"github.com/rag594/konfigStore/locks"
 	"github.com/rag594/konfigStore/model"
 	"github.com/rag594/konfigStore/readPolicy"
+	"github.com/rag594/konfigStore/writePolicy"
 	"strings"
 )
 
 type ConfigRegister[T model.TenantId, V any] struct {
-	ConfigDbOps    configDb.IConfigDbRepo[T, V]
-	ConfigCacheOps cache.IConfigCacheRepo[T, V]
+	configDbOps    configDb.IConfigDbRepo[T, V]
+	configCacheOps cache.IConfigCacheRepo[T, V]
 	ReadPolicy     readPolicy.IReadPolicy[T, V]
-	LockManager    locks.LockManager
+	WritePolicy    writePolicy.IWritePolicy[T, V]
+	lockManager    locks.LockManager
 }
 
 func RegisterConfig[T model.TenantId, V any](configOptsOptions ...ConfigOptsOptions) *ConfigRegister[T, V] {
@@ -35,20 +37,35 @@ func RegisterConfig[T model.TenantId, V any](configOptsOptions ...ConfigOptsOpti
 
 	// Registers Db ops for new config(this is registered by default)
 	configDbOps := configDb.RegisterConfigForDbOps[T, V](configOptions.SqlxDbConn, configOptions.ConfigKey)
-	configRegister.ConfigDbOps = configDbOps
+	configRegister.configDbOps = configDbOps
 
 	// Cache is optional for registration
 	if configOptions.RedisNCClient != nil {
 		// Registers Cache ops for new config
 		configCacheOps := cache.RegisterConfigForCacheOps[T, V](configOptions.RedisNCClient, configDbOps, configOptions.TTL)
-		configRegister.ConfigCacheOps = configCacheOps
+		configRegister.configCacheOps = configCacheOps
 		// using redSync for redis-locks
 		pool := goredis.NewPool(configOptions.RedisNCClient)
-		configRegister.LockManager = locks.NewRedisLockManager(redsync.New(pool))
+		configRegister.lockManager = locks.NewRedisLockManager(redsync.New(pool))
 	}
 
 	// Default read policy
-	configRegister.ReadPolicy = readPolicy.NewDefaultReadPolicy(configRegister.ConfigCacheOps, configDbOps)
+	configRegister.ReadPolicy = readPolicy.NewDefaultReadPolicy(configRegister.configCacheOps, configDbOps)
+
+	// Register write policy - write-around
+	if configOptions.IsWriteAroundPolicy() {
+		configRegister.WritePolicy = writePolicy.NewWriteAroundPolicy(configRegister.configCacheOps, configDbOps, configRegister.lockManager)
+	}
+
+	// Register write policy - write-through
+	if configOptions.IsWriteThroughPolicy() {
+		configRegister.WritePolicy = writePolicy.NewWriteThroughPolicy(configRegister.configCacheOps, configDbOps, configRegister.lockManager)
+	}
+
+	// Register write policy - write-back
+	if configOptions.IsWriteBackPolicy() {
+		configRegister.WritePolicy = writePolicy.NewWriteBackPolicy(configRegister.configCacheOps, configDbOps, configRegister.lockManager)
+	}
 
 	return configRegister
 }

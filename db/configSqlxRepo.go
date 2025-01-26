@@ -20,7 +20,7 @@ func RegisterConfigForDbOps[T model.TenantId, V any](conn *sqlx.DB, configKey st
 
 func (c *ConfigRepo[T, V]) SaveConfig(ctx context.Context, config *model.Config[T, V]) (int64, error) {
 	insertQuery := "INSERT INTO Config (entityId, configKey, value) VALUES (?, ?, ?)"
-	res, err := c.Conn.ExecContext(ctx, insertQuery, config.EntityId, config.Key, config.Value)
+	res, err := c.Conn.ExecContext(ctx, insertQuery, config.EntityId, c.ConfigKey, config.Value)
 	if err != nil {
 		return -1, err
 	}

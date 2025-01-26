@@ -6,7 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/rag594/konfigStore/cache"
-	"github.com/rag594/konfigStore/readPolicy"
+	"github.com/rag594/konfigStore/writePolicy"
 	"github.com/redis/go-redis/v9"
 	"log"
 	"time"
@@ -14,6 +14,10 @@ import (
 
 type ComplexFeatureConfig struct {
 	Enable string
+}
+
+type SmartFeatureConfig struct {
+	SmartSetting string
 }
 
 func NewRedisNonClusteredClient() *redis.Client {
@@ -56,12 +60,13 @@ func main() {
 	Example on how to fetch the config
 	*/
 
+	// Read
+
 	// register your new configuration
 	complexFeatConfigRegister := RegisterConfig[int, ComplexFeatureConfig](
 		WithSqlXDbConn(dbConn),
 		WithRedisNCClient(redisConn),
 		WithTTL(time.Minute),
-		WithReadPolicy(readPolicy.CacheAside),
 	)
 
 	// define your new cache key(it ius a function of entityId along with other options)
@@ -85,5 +90,34 @@ func main() {
 	}
 
 	fmt.Println(y)
+
+	// Write
+
+	// register your new configuration
+	smartFeatConfigRegister := RegisterConfig[int, SmartFeatureConfig](
+		WithSqlXDbConn(dbConn),
+		WithRedisNCClient(redisConn),
+		WithWritePolicy(writePolicy.WriteAround),
+		WithTTL(time.Minute),
+	)
+
+	// define your new cache key(it ius a function of entityId along with other options)
+	cacheKeyForEntityC := cache.NewCacheKey[int, SmartFeatureConfig](20)
+
+	val := &SmartFeatureConfig{SmartSetting: "ljlkjlkjla"}
+
+	err = smartFeatConfigRegister.WritePolicy.SetConfig(context.Background(), cacheKeyForEntityC.DefaultValue(), 20, val)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	smartVal, err := smartFeatConfigRegister.ReadPolicy.GetConfig(context.Background(), cacheKeyForEntityC.DefaultValue(), 20)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(smartVal)
 
 }

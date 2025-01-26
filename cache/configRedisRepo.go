@@ -56,7 +56,6 @@ func (c *ConfigRedisRepo[T, V]) GetConfigByKeyForEntity(ctx context.Context, key
 }
 
 func (c *ConfigRedisRepo[T, V]) GetConfig(ctx context.Context, key string, entityId T) (*V, error) {
-	// TODO: synchronization mechanisms between cache and primary data store
 	v, err := c.GetConfigByKeyForEntity(ctx, key)
 	if err != nil && !errors.Is(err, redis.Nil) {
 		return nil, err
@@ -67,19 +66,14 @@ func (c *ConfigRedisRepo[T, V]) GetConfig(ctx context.Context, key string, entit
 		return v, nil
 	}
 
-	// fetch the config from primary data source
-	vDb, err := c.ConfigDbRepo.GetConfigByKeyForEntity(ctx, entityId)
+	return nil, nil
+}
 
+func (c *ConfigRedisRepo[T, V]) IsConfigCacheKeyPresent(ctx context.Context, key string) (bool, error) {
+	val, err := c.RNonClusteredClient.Exists(ctx, key).Result()
 	if err != nil {
-		return nil, err
+		return false, err
 	}
 
-	// set the config in cache
-	err = c.SaveConfig(ctx, key, vDb)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return vDb, nil
+	return val == 1, nil
 }
