@@ -6,6 +6,7 @@ import (
 	"github.com/rag594/konfigStore/cache"
 	"github.com/rag594/konfigStore/config"
 	configDb "github.com/rag594/konfigStore/db"
+	"github.com/rag594/konfigStore/konfigStore"
 	"github.com/rag594/konfigStore/locks"
 	"github.com/rag594/konfigStore/readPolicy"
 	"github.com/rag594/konfigStore/writePolicy"
@@ -18,9 +19,10 @@ type ConfigRegister[T config.TenantId, V any] struct {
 	ReadPolicy     readPolicy.IReadPolicy[T, V]
 	WritePolicy    writePolicy.IWritePolicy[T, V]
 	lockManager    locks.LockManager
+	KonfigStore    *konfigStore.KonfigStore
 }
 
-func RegisterConfig[T config.TenantId, V any](configOptsOptions ...ConfigOptsOptions) *ConfigRegister[T, V] {
+func RegisterConfig[T config.TenantId, V any](konfigStore *konfigStore.KonfigStore, configOptsOptions ...ConfigOptsOptions) *ConfigRegister[T, V] {
 	// Registers a new config
 	configRegister := &ConfigRegister[T, V]{}
 
@@ -34,15 +36,15 @@ func RegisterConfig[T config.TenantId, V any](configOptsOptions ...ConfigOptsOpt
 	}
 
 	// Registers Db ops for new config(this is registered by default)
-	configDbOps := configDb.RegisterConfigForDbOps[T, V](configOptions.SqlxDbConn, configOptions.ConfigKey)
+	configDbOps := configDb.RegisterConfigForDbOps[T, V](konfigStore.Database.Connection, configOptions.ConfigKey)
 	configRegister.configDbOps = configDbOps
 
 	// Cache is optional for registration
-	if configOptions.RedisNCClient != nil {
+	if konfigStore.RedisCache.Connection != nil {
 		// Registers Cache ops for new config
-		configCacheOps := cache.RegisterConfigForCacheOps[T, V](configOptions.RedisNCClient, configDbOps, configOptions.TTL)
+		configCacheOps := cache.RegisterConfigForCacheOps[T, V](konfigStore.RedisCache.Connection, configDbOps, configOptions.TTL)
 		configRegister.configCacheOps = configCacheOps
-		configRegister.lockManager = locks.NewRedisLockManager(configOptions.RedisNCClient)
+		configRegister.lockManager = locks.NewRedisLockManager(konfigStore.RedisCache.Connection)
 	}
 
 	// Default read policy

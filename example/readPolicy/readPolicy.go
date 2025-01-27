@@ -6,6 +6,7 @@ import (
 	"github.com/rag594/konfigStore/cache"
 	"github.com/rag594/konfigStore/configRegister"
 	"github.com/rag594/konfigStore/example"
+	"github.com/rag594/konfigStore/konfigStore"
 	"time"
 )
 
@@ -25,10 +26,16 @@ func main() {
 
 	// Read
 
+	kStore := konfigStore.New(
+		konfigStore.WithDatabase(&konfigStore.Database{Connection: dbConn}),
+		konfigStore.WithRedisCache(&konfigStore.RedisCache{
+			Connection:         redisConn,
+			ClusterModeEnabled: false,
+		}))
+
 	// register your new configuration
 	complexFeatConfigRegister := configRegister.RegisterConfig[int, ComplexFeatureConfig](
-		configRegister.WithSqlXDbConn(dbConn),
-		configRegister.WithRedisNCClient(redisConn),
+		kStore,
 		configRegister.WithTTL(time.Minute),
 	)
 

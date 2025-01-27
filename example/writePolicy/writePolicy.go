@@ -7,6 +7,7 @@ import (
 	"github.com/rag594/konfigStore/cache"
 	"github.com/rag594/konfigStore/configRegister"
 	"github.com/rag594/konfigStore/example"
+	"github.com/rag594/konfigStore/konfigStore"
 	"github.com/rag594/konfigStore/writePolicy"
 	"time"
 )
@@ -24,10 +25,16 @@ func main() {
 
 	// Write
 
+	kStore := konfigStore.New(
+		konfigStore.WithDatabase(&konfigStore.Database{Connection: dbConn}),
+		konfigStore.WithRedisCache(&konfigStore.RedisCache{
+			Connection:         redisConn,
+			ClusterModeEnabled: false,
+		}))
+
 	// register your new configuration
 	smartFeatConfigRegister := configRegister.RegisterConfig[int, SmartFeatureConfig](
-		configRegister.WithSqlXDbConn(dbConn),
-		configRegister.WithRedisNCClient(redisConn),
+		kStore,
 		configRegister.WithWritePolicy(writePolicy.WriteBack),
 		configRegister.WithTTL(time.Minute),
 	)
@@ -50,6 +57,4 @@ func main() {
 	}
 
 	fmt.Println(smartVal)
-
-	time.Sleep(time.Minute * 2)
 }
