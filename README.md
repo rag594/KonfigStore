@@ -46,8 +46,20 @@ A multi tenant configuration management. Configuration are like key/value pairs 
 
 #### Config Schema needs to be created
 
-```sh
-Schema under /ddl/config.sql needs to be created in your database
+First, create config table (please note that currently entityId)
+
+```mysql
+# MySQL, MariaDB
+CREATE TABLE Config
+(
+  id        BIGINT AUTO_INCREMENT PRIMARY KEY,
+  entityId  BIGINT      NOT NULL,
+  configKey VARCHAR(50) NOT NULL,
+  value     JSON        NOT NULL DEFAULT (JSON_OBJECT()),
+  addedOn   DATETIME             DEFAULT CURRENT_TIMESTAMP,
+  updatedOn DATETIME             DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `uc_entityId_configKey` UNIQUE (`entityId`, `configKey`)
+);
 ```
 
 #### Initialise the KonfigStore
