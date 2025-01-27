@@ -1,4 +1,4 @@
-# KonfigStore - A redis backed multi-tenant config store
+# KonfigStore - A cache backed multi-tenant config store
 
 
 A multi tenant configuration management. Configuration are like key/value pairs for a tenant.These configurations are specific to feature/workflow that a tenant uses in your system.
