@@ -26,6 +26,9 @@ A multi tenant configuration management. Configuration are like key/value pairs 
   - [ ] custom cacheKey
 - [ ] Monitoring
 - [ ] Logging
+- [ ] Custom Table name of Config
+- [ ] shell script to create the DDL
+- [ ] Benchmarking, performance etc
 - [ ] Current state of a group/category of configuration in cache/db.
 - [ ] Grouping/Categorisation of config to ease the fetch of config of similar category/groups(do we need multiple groups per config?)
 - [ ] Lineage of a configuration with time(will include changes in configuration, timestamp, updatedBy etc)
@@ -37,6 +40,12 @@ A multi tenant configuration management. Configuration are like key/value pairs 
 > **_NOTE:_**  Currently for database MYSQL v8.0 or greater and Redis as a distributed cache
 
 > **_NOTE:_**  sqlx(https://github.com/jmoiron/sqlx) is currently supported for Db and go-redis/v9(https://github.com/redis/go-redis) for redis
+
+#### Config Schema needs to be created
+
+```sh
+Schema under /ddl/config.sql needs to be created in your database
+```
 
 #### Initialise the KonfigStore
 
