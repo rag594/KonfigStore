@@ -1,18 +1,18 @@
-package main
+package configRegister
 
 import (
 	"fmt"
 	"github.com/iancoleman/strcase"
 	"github.com/rag594/konfigStore/cache"
+	"github.com/rag594/konfigStore/config"
 	configDb "github.com/rag594/konfigStore/db"
 	"github.com/rag594/konfigStore/locks"
-	"github.com/rag594/konfigStore/model"
 	"github.com/rag594/konfigStore/readPolicy"
 	"github.com/rag594/konfigStore/writePolicy"
 	"strings"
 )
 
-type ConfigRegister[T model.TenantId, V any] struct {
+type ConfigRegister[T config.TenantId, V any] struct {
 	configDbOps    configDb.IConfigDbRepo[T, V]
 	configCacheOps cache.IConfigCacheRepo[T, V]
 	ReadPolicy     readPolicy.IReadPolicy[T, V]
@@ -20,7 +20,7 @@ type ConfigRegister[T model.TenantId, V any] struct {
 	lockManager    locks.LockManager
 }
 
-func RegisterConfig[T model.TenantId, V any](configOptsOptions ...ConfigOptsOptions) *ConfigRegister[T, V] {
+func RegisterConfig[T config.TenantId, V any](configOptsOptions ...ConfigOptsOptions) *ConfigRegister[T, V] {
 	// Registers a new config
 	configRegister := &ConfigRegister[T, V]{}
 

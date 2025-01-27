@@ -4,19 +4,19 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/rag594/konfigStore/config"
 	configDb "github.com/rag594/konfigStore/db"
-	"github.com/rag594/konfigStore/model"
 	"github.com/redis/go-redis/v9"
 	"time"
 )
 
-type ConfigRedisRepo[T model.TenantId, V any] struct {
+type ConfigRedisRepo[T config.TenantId, V any] struct {
 	RNonClusteredClient *redis.Client
 	ConfigDbRepo        configDb.IConfigDbRepo[T, V]
 	TTL                 time.Duration
 }
 
-func RegisterConfigForCacheOps[T model.TenantId, V any](client *redis.Client, configDbRepo configDb.IConfigDbRepo[T, V], ttl time.Duration) *ConfigRedisRepo[T, V] {
+func RegisterConfigForCacheOps[T config.TenantId, V any](client *redis.Client, configDbRepo configDb.IConfigDbRepo[T, V], ttl time.Duration) *ConfigRedisRepo[T, V] {
 	return &ConfigRedisRepo[T, V]{
 		RNonClusteredClient: client,
 		TTL:                 ttl,

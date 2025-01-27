@@ -3,20 +3,20 @@ package writePolicy
 import (
 	"context"
 	"github.com/rag594/konfigStore/cache"
+	"github.com/rag594/konfigStore/config"
 	"github.com/rag594/konfigStore/db"
 	"github.com/rag594/konfigStore/locks"
-	"github.com/rag594/konfigStore/model"
 	"sync"
 )
 
-type WriteBackPolicy[T model.TenantId, V any] struct {
+type WriteBackPolicy[T config.TenantId, V any] struct {
 	ConfigCacheOps cache.IConfigCacheRepo[T, V]
 	ConfigDbRepo   db.IConfigDbRepo[T, V]
 	LockManager    locks.LockManager
 	Wg             sync.WaitGroup
 }
 
-func NewWriteBackPolicy[T model.TenantId, V any](configCacheOps cache.IConfigCacheRepo[T, V], configDbOps db.IConfigDbRepo[T, V], locksManager locks.LockManager) *WriteBackPolicy[T, V] {
+func NewWriteBackPolicy[T config.TenantId, V any](configCacheOps cache.IConfigCacheRepo[T, V], configDbOps db.IConfigDbRepo[T, V], locksManager locks.LockManager) *WriteBackPolicy[T, V] {
 	return &WriteBackPolicy[T, V]{
 		ConfigCacheOps: configCacheOps,
 		ConfigDbRepo:   configDbOps,
@@ -53,8 +53,8 @@ func (w *WriteBackPolicy[T, V]) setConfigAsyncInDb(ctx context.Context, cacheKey
 
 	w.Wg.Add(1)
 
-	go w.ConfigDbRepo.SaveConfig(ctx, &model.Config[T, V]{
+	go w.ConfigDbRepo.SaveConfig(ctx, &config.Config[T, V]{
 		EntityId: entityId,
-		Value:    model.ConfigValue[V]{Val: value},
+		Value:    config.ConfigValue[V]{Val: value},
 	})
 }

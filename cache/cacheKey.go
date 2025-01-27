@@ -3,7 +3,7 @@ package cache
 import (
 	"fmt"
 	"github.com/iancoleman/strcase"
-	"github.com/rag594/konfigStore/model"
+	"github.com/rag594/konfigStore/config"
 	"strings"
 )
 
@@ -11,27 +11,27 @@ const (
 	defaultKeyPrefix = "KONFIG_STORE"
 )
 
-type CacheKey[T model.TenantId, V any] struct {
+type CacheKey[T config.TenantId, V any] struct {
 	EntityId  T
 	Prefix    string
 	ConfigKey string
 }
 
-type CacheKeyOptions[T model.TenantId, V any] func(*CacheKey[T, V])
+type CacheKeyOptions[T config.TenantId, V any] func(*CacheKey[T, V])
 
-func WithCacheKeyPrefix[T model.TenantId, V any](prefix string) CacheKeyOptions[T, V] {
+func WithCacheKeyPrefix[T config.TenantId, V any](prefix string) CacheKeyOptions[T, V] {
 	return func(c *CacheKey[T, V]) {
 		c.Prefix = prefix
 	}
 }
 
-func WithCacheConfigKey[T model.TenantId, V any](configKey string) CacheKeyOptions[T, V] {
+func WithCacheConfigKey[T config.TenantId, V any](configKey string) CacheKeyOptions[T, V] {
 	return func(c *CacheKey[T, V]) {
 		c.ConfigKey = configKey
 	}
 }
 
-func NewCacheKey[T model.TenantId, V any](entityId T, opts ...CacheKeyOptions[T, V]) *CacheKey[T, V] {
+func NewCacheKey[T config.TenantId, V any](entityId T, opts ...CacheKeyOptions[T, V]) *CacheKey[T, V] {
 	c := &CacheKey[T, V]{
 		EntityId:  entityId,
 		Prefix:    defaultKeyPrefix,

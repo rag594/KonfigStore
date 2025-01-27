@@ -4,18 +4,18 @@ import (
 	"context"
 	"errors"
 	"github.com/rag594/konfigStore/cache"
+	"github.com/rag594/konfigStore/config"
 	"github.com/rag594/konfigStore/db"
-	"github.com/rag594/konfigStore/model"
 	"github.com/rag594/konfigStore/requestCoalescing"
 	"github.com/redis/go-redis/v9"
 )
 
-type DefaultReadPolicy[T model.TenantId, V any] struct {
+type DefaultReadPolicy[T config.TenantId, V any] struct {
 	ConfigCacheOps cache.IConfigCacheRepo[T, V]
 	ConfigDbRepo   db.IConfigDbRepo[T, V]
 }
 
-func NewDefaultReadPolicy[T model.TenantId, V any](configCacheOps cache.IConfigCacheRepo[T, V], configDbOps db.IConfigDbRepo[T, V]) *DefaultReadPolicy[T, V] {
+func NewDefaultReadPolicy[T config.TenantId, V any](configCacheOps cache.IConfigCacheRepo[T, V], configDbOps db.IConfigDbRepo[T, V]) *DefaultReadPolicy[T, V] {
 	return &DefaultReadPolicy[T, V]{
 		ConfigCacheOps: configCacheOps,
 		ConfigDbRepo:   configDbOps,

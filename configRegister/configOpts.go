@@ -1,4 +1,4 @@
-package main
+package configRegister
 
 import (
 	"github.com/jmoiron/sqlx"

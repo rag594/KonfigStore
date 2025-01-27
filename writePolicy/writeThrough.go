@@ -3,18 +3,18 @@ package writePolicy
 import (
 	"context"
 	"github.com/rag594/konfigStore/cache"
+	"github.com/rag594/konfigStore/config"
 	"github.com/rag594/konfigStore/db"
 	"github.com/rag594/konfigStore/locks"
-	"github.com/rag594/konfigStore/model"
 )
 
-type WriteThroughPolicy[T model.TenantId, V any] struct {
+type WriteThroughPolicy[T config.TenantId, V any] struct {
 	ConfigCacheOps cache.IConfigCacheRepo[T, V]
 	ConfigDbRepo   db.IConfigDbRepo[T, V]
 	LockManager    locks.LockManager
 }
 
-func NewWriteThroughPolicy[T model.TenantId, V any](configCacheOps cache.IConfigCacheRepo[T, V], configDbOps db.IConfigDbRepo[T, V], locksManager locks.LockManager) *WriteThroughPolicy[T, V] {
+func NewWriteThroughPolicy[T config.TenantId, V any](configCacheOps cache.IConfigCacheRepo[T, V], configDbOps db.IConfigDbRepo[T, V], locksManager locks.LockManager) *WriteThroughPolicy[T, V] {
 	return &WriteThroughPolicy[T, V]{
 		ConfigCacheOps: configCacheOps,
 		ConfigDbRepo:   configDbOps,
@@ -34,9 +34,9 @@ func (w *WriteThroughPolicy[T, V]) SetConfig(ctx context.Context, cacheKey strin
 	}
 
 	// Save in DB
-	_, err = w.ConfigDbRepo.SaveConfig(ctx, &model.Config[T, V]{
+	_, err = w.ConfigDbRepo.SaveConfig(ctx, &config.Config[T, V]{
 		EntityId: entityId,
-		Value:    model.ConfigValue[V]{Val: value},
+		Value:    config.ConfigValue[V]{Val: value},
 	})
 
 	if err != nil {

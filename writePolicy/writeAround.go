@@ -3,18 +3,18 @@ package writePolicy
 import (
 	"context"
 	"github.com/rag594/konfigStore/cache"
+	"github.com/rag594/konfigStore/config"
 	"github.com/rag594/konfigStore/db"
 	"github.com/rag594/konfigStore/locks"
-	"github.com/rag594/konfigStore/model"
 )
 
-type WriteAroundPolicy[T model.TenantId, V any] struct {
+type WriteAroundPolicy[T config.TenantId, V any] struct {
 	ConfigCacheOps cache.IConfigCacheRepo[T, V]
 	ConfigDbRepo   db.IConfigDbRepo[T, V]
 	LockManager    locks.LockManager
 }
 
-func NewWriteAroundPolicy[T model.TenantId, V any](configCacheOps cache.IConfigCacheRepo[T, V], configDbOps db.IConfigDbRepo[T, V], locksManager locks.LockManager) *WriteAroundPolicy[T, V] {
+func NewWriteAroundPolicy[T config.TenantId, V any](configCacheOps cache.IConfigCacheRepo[T, V], configDbOps db.IConfigDbRepo[T, V], locksManager locks.LockManager) *WriteAroundPolicy[T, V] {
 	return &WriteAroundPolicy[T, V]{
 		ConfigCacheOps: configCacheOps,
 		ConfigDbRepo:   configDbOps,
@@ -43,9 +43,9 @@ func (w *WriteAroundPolicy[T, V]) SetConfig(ctx context.Context, cacheKey string
 	}
 
 	// update in DB
-	_, err = w.ConfigDbRepo.SaveConfig(ctx, &model.Config[T, V]{
+	_, err = w.ConfigDbRepo.SaveConfig(ctx, &config.Config[T, V]{
 		EntityId: entityId,
-		Value:    model.ConfigValue[V]{Val: value},
+		Value:    config.ConfigValue[V]{Val: value},
 	})
 
 	if err != nil {
