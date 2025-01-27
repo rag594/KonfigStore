@@ -35,6 +35,9 @@ A multi tenant configuration management. Configuration are like key/value pairs 
 - [ ] Web based UI for managing the configurations per tenant(RBAC for listing, editing, viewing configurations per tenant). It is optional.
 
 
+### Install [WIP]
+
+
 ### How to use it
 
 > **_NOTE:_**  Currently for database MYSQL v8.0 or greater and Redis as a distributed cache
