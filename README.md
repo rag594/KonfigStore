@@ -1,5 +1,6 @@
 # KonfigStore - A cache backed multi-tenant config store
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/rag594/konfig-store.svg)](https://pkg.go.dev/github.com/rag594/konfig-store)
 
 A multi tenant configuration management. Configuration are like key/value pairs for a tenant.These configurations are specific to feature/workflow that a tenant uses in your system.
 
