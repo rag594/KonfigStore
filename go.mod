@@ -1,4 +1,4 @@
-module github.com/rag594/konfigStore
+module github.com/rag594/konfig-store
 
 go 1.22.0
 

@@ -3,10 +3,10 @@ package readPolicy
 import (
 	"context"
 	"errors"
-	"github.com/rag594/konfigStore/cache"
-	"github.com/rag594/konfigStore/config"
-	"github.com/rag594/konfigStore/db"
-	"github.com/rag594/konfigStore/requestCoalescing"
+	"github.com/rag594/konfig-store/cache"
+	"github.com/rag594/konfig-store/config"
+	"github.com/rag594/konfig-store/db"
+	"github.com/rag594/konfig-store/requestCoalescing"
 	"github.com/redis/go-redis/v9"
 )
 

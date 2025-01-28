@@ -2,7 +2,7 @@ package readPolicy
 
 import (
 	"context"
-	"github.com/rag594/konfigStore/config"
+	"github.com/rag594/konfig-store/config"
 )
 
 type IReadPolicy[T config.TenantId, V any] interface {

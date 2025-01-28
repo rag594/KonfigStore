@@ -2,7 +2,7 @@ package cache
 
 import (
 	"context"
-	"github.com/rag594/konfigStore/config"
+	"github.com/rag594/konfig-store/config"
 )
 
 type IConfigCacheRepo[T config.TenantId, V any] interface {

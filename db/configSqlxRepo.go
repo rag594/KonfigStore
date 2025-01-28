@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 	"github.com/jmoiron/sqlx"
-	"github.com/rag594/konfigStore/config"
+	"github.com/rag594/konfig-store/config"
 )
 
 type ConfigRepo[T config.TenantId, V any] struct {

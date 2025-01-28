@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/rag594/konfigStore/config"
-	configDb "github.com/rag594/konfigStore/db"
+	"github.com/rag594/konfig-store/config"
+	configDb "github.com/rag594/konfig-store/db"
 	"github.com/redis/go-redis/v9"
 	"time"
 )

@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/rag594/konfigStore/cache"
-	"github.com/rag594/konfigStore/configRegister"
-	"github.com/rag594/konfigStore/example"
-	"github.com/rag594/konfigStore/konfigStore"
-	"github.com/rag594/konfigStore/writePolicy"
+	"github.com/rag594/konfig-store/cache"
+	"github.com/rag594/konfig-store/configRegister"
+	"github.com/rag594/konfig-store/example"
+	"github.com/rag594/konfig-store/konfigStore"
+	"github.com/rag594/konfig-store/writePolicy"
 	"time"
 )
 

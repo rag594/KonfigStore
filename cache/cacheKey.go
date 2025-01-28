@@ -3,7 +3,7 @@ package cache
 import (
 	"fmt"
 	"github.com/iancoleman/strcase"
-	"github.com/rag594/konfigStore/config"
+	"github.com/rag594/konfig-store/config"
 	"strings"
 )
 

@@ -3,13 +3,13 @@ package configRegister
 import (
 	"fmt"
 	"github.com/iancoleman/strcase"
-	"github.com/rag594/konfigStore/cache"
-	"github.com/rag594/konfigStore/config"
-	configDb "github.com/rag594/konfigStore/db"
-	"github.com/rag594/konfigStore/konfigStore"
-	"github.com/rag594/konfigStore/locks"
-	"github.com/rag594/konfigStore/readPolicy"
-	"github.com/rag594/konfigStore/writePolicy"
+	"github.com/rag594/konfig-store/cache"
+	"github.com/rag594/konfig-store/config"
+	configDb "github.com/rag594/konfig-store/db"
+	"github.com/rag594/konfig-store/konfigStore"
+	"github.com/rag594/konfig-store/locks"
+	"github.com/rag594/konfig-store/readPolicy"
+	"github.com/rag594/konfig-store/writePolicy"
 	"strings"
 )
 

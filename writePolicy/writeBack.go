@@ -2,10 +2,10 @@ package writePolicy
 
 import (
 	"context"
-	"github.com/rag594/konfigStore/cache"
-	"github.com/rag594/konfigStore/config"
-	"github.com/rag594/konfigStore/db"
-	"github.com/rag594/konfigStore/locks"
+	"github.com/rag594/konfig-store/cache"
+	"github.com/rag594/konfig-store/config"
+	"github.com/rag594/konfig-store/db"
+	"github.com/rag594/konfig-store/locks"
 	"sync"
 )
 

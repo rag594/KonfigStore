@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/rag594/konfigStore/cache"
-	"github.com/rag594/konfigStore/configRegister"
-	"github.com/rag594/konfigStore/example"
-	"github.com/rag594/konfigStore/konfigStore"
+	"github.com/rag594/konfig-store/cache"
+	"github.com/rag594/konfig-store/configRegister"
+	"github.com/rag594/konfig-store/example"
+	"github.com/rag594/konfig-store/konfigStore"
 	"time"
 )
 

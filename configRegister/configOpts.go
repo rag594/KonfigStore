@@ -1,7 +1,7 @@
 package configRegister
 
 import (
-	"github.com/rag594/konfigStore/writePolicy"
+	"github.com/rag594/konfig-store/writePolicy"
 	"strings"
 	"time"
 )
