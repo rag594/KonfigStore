@@ -69,7 +69,7 @@ CREATE TABLE Config
 Import the konfigStore package
 
 ```go
-import "github.com/rag594/konfigStore"
+import "github.com/rag594/konfig-store"
 ```
 
 
