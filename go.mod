@@ -2,8 +2,6 @@ module github.com/rag594/konfigStore
 
 go 1.22.0
 
-toolchain go1.23.0
-
 require (
 	github.com/bsm/redislock v0.9.4
 	github.com/go-sql-driver/mysql v1.8.1

@@ -35,7 +35,11 @@ A multi tenant configuration management. Configuration are like key/value pairs 
 - [ ] Web based UI for managing the configurations per tenant(RBAC for listing, editing, viewing configurations per tenant). It is optional.
 
 
-### Install [WIP]
+### Usage
+
+```shell
+go get github.com/rag594/konfigStore
+```
 
 
 ### How to use it
@@ -61,6 +65,13 @@ CREATE TABLE Config
   CONSTRAINT `uc_entityId_configKey` UNIQUE (`entityId`, `configKey`)
 );
 ```
+
+Import the konfigStore package
+
+```go
+import "github.com/rag594/konfigStore"
+```
+
 
 #### Initialise the KonfigStore
 
