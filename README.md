@@ -39,7 +39,7 @@ A multi tenant configuration management. Configuration are like key/value pairs 
 ### Usage
 
 ```shell
-go get github.com/rag594/konfigStore
+go get github.com/rag594/konfig-store
 ```
 
 
